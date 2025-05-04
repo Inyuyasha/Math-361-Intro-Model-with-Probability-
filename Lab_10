@@ -1,0 +1,124 @@
+---
+title: "Lab 10: Sections 5.3 & 5.5"
+subtitle: "MATH 361"
+author: "David Isaiah Galan"
+date: "4/4/2025"
+format: 
+  html:
+    self-contained: true
+    toc: true
+    toc_float: true
+    number-section: false
+    highlight: tango
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+Tutorial
+
+In this lab, you will use R to compute probabilities from the normal and t distributions and use what you've learned about linear combinations of normal random variables.
+
+You will use the functions pt() and qt() to find probabilities and cutoff values from the t-distribution. These functions are analogous to the p___() and q___() functions you have used from other distributions. The t-distribution requires one parameter - the degrees of freedom; in R this argument is called df. You can pull up the help page for the t-distribution functions by typing ?pt() into your console.
+
+Example 1
+
+Find $P(44.4 \leq \overline{X} \leq 48.98)$ when $\overline{X}$ is the sample mean of $n = 16$ observations with $X \sim N(46.58,40.96)$
+
+This implies $\overline{X} \sim N(46.58, 40.96/16)$
+
+{r}
+pnorm(48.98, mean = 46.58, sd = sqrt(40.96/16)) - pnorm(44.42, mean = 46.58, sd = sqrt(40.96/16))
+
+Example 2
+
+Find $t_{0.10}(34)$. This asks, what cutoff value gives 0.10 probability in the upper tail for a t-distribution with 34 degrees of freedom. Recall that functions starting with q allow us to find cutoff values for a given probability.
+
+{r}
+qt(p = 0.1, df = 34, lower.tail = FALSE)
+
+Example 3
+
+Find $P(−1.87 \leq T \leq 1.87)$ when $T \sim t(34)$
+
+{r}
+pt(1.87, df = 34) - pt(-1.87, df = 34)
+
+Tasks
+
+Task 1
+
+Let $X_1, X_2, ... X_{16}$ be a random sample from a normal distribution $N(77,25)$. Compute the following. Hint: you should first determine how $\overline{X}$ is distributed
+
+$P(77 \leq \overline{X} \leq 79.5)$
+
+$P(74.2 \leq \overline{X} \leq 78.4)$
+
+{r}
+x <- pnorm(79.5, mean = 77, sd = sqrt(25)) - pnorm(77, mean = 77, sd = sqrt(25))
+
+y <- pnorm(78.4, mean = 77, sd = sqrt(25)) - pnorm(74.2, mean = 77, sd = sqrt(25))
+
+print(paste("The answer for part a is",x))
+print(paste("The answer for part b is",y))
+
+Task 2
+
+Find the 95th percentile for the standard normal distribution. Compare it to the 95th percentile for the t-distribution with df = 10, df = 1000, and df = 100,000.
+
+{r}
+#95th percentile of standard normal
+n_95 <- qnorm(0.95)
+
+#95th percentile of t(10)
+t_95_df10 <- qt(0.95, df = 10)
+
+#95th percentile of t(1000)
+t_95_df1000 <- qt(0.95, df = 1000)
+
+#95th percentile of t(100000)
+t_95_df100000 <- qt(0.95, df = 10000)
+
+cat("95th Percentiles:\n")
+cat("Standard Normal (Z):", round(n_95, 4), "\n")
+cat("t-distribution (df = 10):", round(t_95_df10, 4), "\n")
+cat("t-distribution (df = 1000):", round(t_95_df1000, 4), "\n")
+cat("t-distribution (df = 100000):", round(t_95_df100000, 4), "\n")
+
+Which of these four distribution has the "fattest tails"?
+
+The "fattest tails" would be the t-distribution of (10) = 1.8125
+
+Which two distributions are the most similar to one another?
+
+The two distributions that are most similar to each other would be t-distribution of (1000) and t-distribution of (10000). The first distribution outputs 1.6464 and the second outputs 1.645.
+
+Task 3
+
+Find $P(-2.06 < X < 2.06)$ when $X \sim t(25)$
+
+{r}
+pt(2.06, df = 25) - pt(-2.06, df = 25)
+
+Task 4
+
+[HTZ 5.5-15, on group work]
+
+Let the distribution of $T$ be $t(17)$. Find:
+
+$t_{0.01}(17)$
+
+$t_{0.95}(17)$
+
+$P(-1.74 < T < 1.74)$
+
+{r}
+qt(0.01, df = 17)
+
+qt(0.95, df = 17)
+
+pt(1.74, df = 17) - pt(-1.74, df = 17)
+
