@@ -1,0 +1,258 @@
+---
+title: "Lab 04"
+subtitle: "MATH 361"
+author: "David Isaiah Galan"
+date: "2/7/2025"
+format: 
+  html:
+    self-contained: true
+    toc: true
+    toc_float: true
+    number-section: false
+    highlight: tango
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+Overview
+
+In this lab, you will conduct simulations to explore the pmf of a random variable, similar to Lab 03. You should copy, paste, and modify code from that lab.
+
+Motivating Example
+
+We will use the following example throughout this lab:
+
+A fair 10-sided die with outcomes 1, 2, 3, 4, 5, 6, 7, 8, 9, and 10 is rolled twice. Let $X$ equal the sum of the two outcomes. Then the possible values of $X$ are 2, 3,... 19, 20. It is possible but quite tedious to work out the pmf by hand, and even then it is not immediately obvious how to write the pmf as a general function involving $x$. We can use simulations to explore the distribution of $X$.
+
+Recap of Logic of Simulations
+
+Recall our earlier definition that probability is a mathematical framework for describing and analyzing random phenomenon (i.e. anything we cannot predict with certainty). We said probability can be interpreted as the proportion of times an event will occur in the long run.
+
+If we don't have a nice mathematical formula to tell us what to expect in the long run (or even if we do), one great way to help us wrap our minds around the behavior of a random variable in the long run is to simulate the random experiment many, many times, and observe what happens in the long run. One option is to physically simulate an experiment (e.g. roll a physical dice many, many times, spin a spinner many, many times, etc.). But in the year of our Lord, 2025, we have machines that can do these things for us MANY, MANY times, MUCH, MUCH quicker than we could do them physically by hand.
+
+Anytime we simulate a random variable $X$, it's important to ask ourselves a few questions (in order):
+
+How would I simulate one value of $X$?
+
+How would I simulate many values of $X$ (e.g. 10000+)? This usually involves repeating Step 1 many, many times. *
+
+How do I aggregate all the simulated results to tell me what I want to know about the behavior of $X$ in the long run?
+
+*Often, R has built in functions for generating random variables, so repeating a simulation large number of times can often be done by simply changing a function argument from $n = 1$ to $n = 100,000$ (or some other large number).
+
+Task 1
+
+Start by loading necessary packages. You will need the tidyverse package for this lab. In order for you to get the same results each time you knit your document, add the command set.seed() to the code chunk and insert your favorite number in the parentheses.
+
+{r, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+
+# load necessary packages
+#| label: load-packages
+#| echo: false
+#| message: false
+library(tidyverse)
+
+#set seed
+set.seed(100)
+
+How would I simulate one value of $X$?
+
+Recall that $X$ is the sum of two rolls of a fair 10-sided die. In order to simulate one value of $X$, we need:
+
+the result of one roll of a 10-sided die ($d_1$)
+
+the result of a 2nd roll of a 10-sided die ($d_2$)
+
+the sum of the two rolls $x = d_1 + d_2$
+
+Recall that rolling a fair dice can be modeled with the uniform distribution. The purrr package (which is part of the tidyverse) has a function rdunif() that allows us to randomly generate numbers from the discrete uniform distribution. The rdunif function takes in 3 arguments:
+
+n to specify the number of observations to generate (in our case, this will be the number of times we want to run the experiment);
+
+a to specify the minimum integer the random variable can take on; and
+
+b to specify the maximum integer the random variable can take on.
+
+Task 2
+
+Create three objects, d1, d2, and x that store the results of one run of our experiment.
+
+{r}
+# Metadata for Quarto/R Markdown: Labels the chunk and ensures it runs.
+#| label: one-run
+#| eval: true
+
+
+d1 <- rdunif(n = 100, a = 0, b = 1)  # Generates 100 random integers between 0 and 1, storing them in d1.
+d2 <- rdunif(n = 100, a = 0, b = 1)  # Generates 100 random integers between 0 and 1, storing them in d2.
+x <- (d1 + d2)  # Adds corresponding elements of d1 and d2, storing the result in x.
+
+print(paste('Sum of d1:', sum(d1))) # Prints the sum of all values in d1.
+print(paste('Sum of d2:', sum(d2))) # Prints the sum of all values in d2.
+
+print(paste("Combined sum stored in x:", sum(x))) # Prints the sum of all values in x.
+
+What value of x did you get? Verify that it is the sum of the d1 and d2 that you generated.
+
+The value of X I got is (104). Sum of d1 is (50) // Sum of d2 is (54) = 104.
+
+Task 3
+
+How do you simulate many values of $X$? Modify the code above to run the experiment 100,000 times. Remember: copy, paste, tweak.
+
+Hint: which of the arguments in rdunif() controls how many observations are simulated?
+
+{r}
+#| eval: true
+
+d1 <- rdunif(n = 100000, a = 0, b = 1) 
+d1 <- rdunif(n = 100000, a = 0, b = 1)  # Generates 100,000 random integers between 0 and 1, storing them in d1.
+d2 <- rdunif(n = 100000, a = 0, b = 1)
+d1 <- rdunif(n = 100000, a = 0, b = 1)  # Generates another 100,000 random integers between 0 and 1, storing them in d2.
+
+x <- (d1 + d2)
+
+print(paste('Sum of d1:', sum(d1))) # Prints out the sum of d1
+print(paste('Sum of d2:', sum(d2))) # Prints out the sum of d2
+
+print(paste("Combined sum stored in x:", sum(x))) # Prints out the sum of both d1 + d2.
+
+Verify that d1, d2, and x all have 100,000 elements now before proceeding.
+
+Task 4
+
+Combine d1, d2, and x into a data frame called sims using the function data.frame(). Use the function dim() to determine the dimensions of the data. Hint: see Task 4 in Lab 03
+
+{r}
+# create data frame
+sims <- data.frame(d1, d2, x)
+
+# check dimensions - should be 100000 x 6
+dim(sims)
+
+How many rows and columns does data have?
+
+There are (100000) rows // There are (3) Columns.
+
+Task 5
+
+Now that you've simulated many values of $X$, you can now explore its aggregate behavior.
+
+As a sanity check, plot d1 and d2 (in separate plots) to see if they are uniformly distributed as expected (since they are the rolls of fair dice). Remember, because these are simulations, we only expect the results to be approximately correct. Hint: copy and paste code for creating a bar plot from Lab 03
+
+{r}
+# Set up plotting area to show two plots side by side
+par(mfrow = c(1, 2))  
+
+# Plot histogram of d1
+hist(d1, main = "Histogram of d1", xlab = "Values", col = "lightblue", border = "black")
+
+# Plot histogram of d2
+hist(d2, main = "Histogram of d2", xlab = "Values", col = "lightgreen", border = "black")
+
+# Reset plotting layout
+par(mfrow = c(1, 1)) 
+
+Do d1 and d2 look uniformly distributed?
+
+Yes. d1 and d2 look uniformly distributed.
+
+Task 6
+
+If d1 and d2 are both uniform, do you think d1 + d2 will also be uniform?
+
+I would say no because d1 and d2 will mostly have random value integers. It could happen to be the same but that is a rare occurrence that can happen.
+
+Task 7
+
+Plot x to explore the shape of its distribution. Also summarize the distribution with a table of relative frequencies. Hint: see Task 4 from Lab 03
+
+{r}
+# Plot histogram of x.
+hist(x, main = "Histogram of X", xlab = "Values of X", col = "lightcoral", border = "black", breaks = 3)
+
+Is x uniform? Explain your reasoning.
+
+X is not uniform due to the probabilities in the f(x) portion not aligning with each other. Meaning they don't add up to the same percentage of occurring.
+
+Task 8
+
+Given the distribution of x, what do you think $E(X)$ is equal to? Note, you do not need to perform calculations here, I am interested in your interpretation of the above results.
+
+E(x) might range from .25 to .50. If we look at 0, 1 and 2, both 0.0 and 2.0 I would say visually looks (.25) matching values. Verses 0.5 and 1.0 which looks like (.50) double the amount of .25.
+
+Task 9
+
+Use the functions mean() and var() to calculate approximate values for $E(X)$ and $V(X)$ based on your simulated data.
+
+{r}
+#Mean of E(x) of x
+mean_x <- mean(x)
+print(paste("E(X) = ",mean_x))
+
+#Variance of V(x) of x
+var_x <- var(x)
+print(paste("V(X) =", var_x))
+
+Task 10
+
+Create a new random variable $Y$ that is equal to $2X$. What do you expect $E(Y)$ and $V(Y)$ to be based on properties of expected value and variance?
+
+Y variable for E(Y) and V(Y) with 2X as the new variable should come out to 2.
+
+Use your simulations to estimate $E(Y)$ and $V(Y)$.
+
+{r}
+# Calculate theoretical values based on previous calculations
+expected_Y <- 2 * mean_x     # Twice E(X)
+variance_Y <- 4 * var_x      # Four times V(X)
+
+# Generate Y = 2X
+y <- 2 * x
+
+# Calculate empirical values
+empirical_mean_y <- mean(y)
+empirical_var_y <- var(y)
+
+# Print results
+print(paste("Expected E(Y):", empirical_mean_y))
+print(paste("Variance V(Y):", empirical_var_y))
+
+# Visualize the relationship between X and Y
+par(mfrow = c(1, 2))
+hist(x, main = "Distribution of X", col = "lightblue", border = "black")
+hist(y, main = "Distribution of Y", col = "red", border = "black")
+
+# Reset plot parameters
+par(mfrow = c(1, 1))
+
+E(Y) = 1.99 // V(Y) = 1.989.
+
+BONUS: Comparing the simulated distribution to the theoretical distribution
+
+It turns out that the true pmf of $X$ is given by the mathematical model $$f(x) = \frac{(10 - |x-11|)}{100}.$$
+
+The following code can be used to compute the pmf for each value in the support
+
+{r}
+support <- 2:20
+pmf <- (10 - abs(support - 11))/100
+pmf
+
+Write code that uses the objects support and pmf to compute the exact values of $E(X)$ and $V(X)$. Recall that $E(X) = \sum xf(x)$ and $V(X) = E(X^2) - (E(X))^2$.
+
+{r}
+Expected_value <- sum(support * pmf)
+Expected_squared <- sum(support^2 * pmf)
+
+Variance <- Expected_squared - Expected_value^2
+
+print(paste("E(X) =", Expected_value))
+print(paste("V(X) =", Expected_squared))
+
+How do these values compare to your approximations in Task 9?
+
+With the Task 9 E(x) and V(x) compared to Bonus task, we see a significant increase from 0.99 to 11 and .49 to 137.5.
+
